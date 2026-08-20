@@ -53,8 +53,8 @@ export default function CaseForm({ editing, onSave, onCancel }) {
         {field('category', '카테고리', '예: 커밋')}
         <div className="full-field">{field('title', '제목', '사용자가 찾을 상황을 입력하세요')}</div>
         <div className="full-field">{field('summary', '상황 요약', '언제 사용하는 명령인지 설명하세요')}</div>
-        <label className="form-field full-field"><span>명령어<em>*</em></span><textarea name="command" value={form.command} onChange={update} rows="4" required placeholder={'git status\ngit log --oneline'} /></label>
-        <label className="form-field full-field"><span>상세 설명<em>*</em></span><textarea name="detail" value={form.detail} onChange={update} rows="4" required placeholder="주의사항과 사용 방법을 입력하세요" /></label>
+        <label className="form-field full-field"><span>명령어<em>*</em></span><textarea name="command" value={form.command} onChange={update} rows="3" required placeholder={'git status\ngit log --oneline'} /></label>
+        <label className="form-field full-field"><span>상세 설명<em>*</em></span><textarea name="detail" value={form.detail} onChange={update} rows="3" required placeholder="주의사항과 사용 방법을 입력하세요" /></label>
         <label className="form-field"><span>태그</span><input name="tags" value={Array.isArray(form.tags) ? form.tags.join(', ') : form.tags} onChange={update} placeholder="기본, 안전" /></label>
         <label className="form-field"><span>검색 키워드</span><input name="keywords" value={Array.isArray(form.keywords) ? form.keywords.join(', ') : form.keywords} onChange={update} placeholder="상태, 수정파일" /></label>
         <label className="form-field"><span>위험도</span><select name="danger" value={form.danger || ''} onChange={update}><option value="">일반</option><option value="warning">주의</option><option value="danger">위험</option></select></label>

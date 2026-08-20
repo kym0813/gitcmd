@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import CaseCard from './components/CaseCard';
 import CaseForm from './components/CaseForm';
-import DataTools from './components/DataTools';
 import LoginPanel from './components/LoginPanel';
 import { useAuth } from './hooks/useAuth';
 import { useCaseStore } from './hooks/useCaseStore';
@@ -11,7 +10,7 @@ const normalize = value => String(value).toLowerCase().replace(/\s+/g, ' ').trim
 
 export default function App() {
   const { user, isAdmin, loading: authLoading, signOut } = useAuth();
-  const { cases, loading, error, saveCase, deleteCase, resetCases, importCases, seedDefaults } = useCaseStore();
+  const { cases, loading, error, saveCase, deleteCase, seedDefaults } = useCaseStore();
   const [category, setCategory] = useState('전체');
   const [query, setQuery] = useState('');
   const [editing, setEditing] = useState(null);
@@ -19,7 +18,6 @@ export default function App() {
   const [loginOpen, setLoginOpen] = useState(false);
   const [seedError, setSeedError] = useState('');
   const searchRef = useRef(null);
-  const editorRef = useRef(null);
 
   const categories = useMemo(() => ['전체', ...new Set(cases.map(item => item.category))], [cases]);
   const filteredCases = useMemo(() => {
@@ -53,16 +51,26 @@ export default function App() {
     }
   }, [authLoading, isAdmin, loading, error, cases.length, seedDefaults]);
 
+  useEffect(() => {
+    if (!editorOpen) return undefined;
+    const closeEditor = event => {
+      if (event.key === 'Escape') {
+        setEditorOpen(false);
+        setEditing(null);
+      }
+    };
+    document.addEventListener('keydown', closeEditor);
+    return () => document.removeEventListener('keydown', closeEditor);
+  }, [editorOpen]);
+
   function editCase(item) {
     setEditing(item);
     setEditorOpen(true);
-    window.setTimeout(() => editorRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 0);
   }
 
   function addCase() {
     setEditing(null);
     setEditorOpen(true);
-    window.setTimeout(() => editorRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 0);
   }
 
   async function removeCase(item) {
@@ -155,18 +163,17 @@ export default function App() {
           </div>
         </section>
 
-        {editorOpen && isAdmin && (
-          <section className="manager-section editor-bottom" ref={editorRef}>
-            <div className="container manager-grid">
-              <CaseForm editing={editing} onSave={persistCase} onCancel={() => { setEditing(null); setEditorOpen(false); }} />
-              <DataTools cases={cases} onImport={importCases} onReset={async () => { await resetCases(); setEditing(null); setEditorOpen(false); }} />
-            </div>
-          </section>
-        )}
       </main>
 
       <footer><div className="container footer-inner"><p>Git Case Guide · React로 만든 상황별 Git 가이드</p><p>위험한 명령어는 실행 전 현재 브랜치와 상태를 꼭 확인하세요.</p></div></footer>
       {loginOpen && <LoginPanel onClose={() => setLoginOpen(false)} />}
+      {editorOpen && isAdmin && (
+        <div className="editor-backdrop" role="presentation" onMouseDown={event => { if (event.target === event.currentTarget) { setEditorOpen(false); setEditing(null); } }}>
+          <section className="editor-modal" role="dialog" aria-modal="true" aria-label={editing ? '케이스 수정' : '새 케이스 추가'}>
+            <CaseForm editing={editing} onSave={persistCase} onCancel={() => { setEditing(null); setEditorOpen(false); }} />
+          </section>
+        </div>
+      )}
     </>
   );
 }
