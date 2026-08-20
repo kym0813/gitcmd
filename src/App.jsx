@@ -14,8 +14,8 @@ export default function App() {
   const { cases, loading, error, saveCase, deleteCase, resetCases, importCases, seedDefaults } = useCaseStore();
   const [category, setCategory] = useState('전체');
   const [query, setQuery] = useState('');
-  const [managing, setManaging] = useState(false);
   const [editing, setEditing] = useState(null);
+  const [editorOpen, setEditorOpen] = useState(false);
   const [loginOpen, setLoginOpen] = useState(false);
   const [seedError, setSeedError] = useState('');
   const searchRef = useRef(null);
@@ -55,14 +55,24 @@ export default function App() {
 
   function editCase(item) {
     setEditing(item);
-    editorRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    setEditorOpen(true);
+    window.setTimeout(() => editorRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 0);
+  }
+
+  function addCase() {
+    setEditing(null);
+    setEditorOpen(true);
+    window.setTimeout(() => editorRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 0);
   }
 
   async function removeCase(item) {
     if (window.confirm(`“${item.title}” 케이스를 삭제할까요?`)) {
       try {
         await deleteCase(item.id);
-        if (editing?.id === item.id) setEditing(null);
+        if (editing?.id === item.id) {
+          setEditing(null);
+          setEditorOpen(false);
+        }
       } catch (deleteError) {
         window.alert(`삭제 실패: ${deleteError.message}`);
       }
@@ -72,19 +82,7 @@ export default function App() {
   async function persistCase(item) {
     await saveCase(item, editing?.id || null);
     setEditing(null);
-  }
-
-  function openManager() {
-    if (!user) {
-      setLoginOpen(true);
-      return;
-    }
-    if (!isAdmin) {
-      window.alert('관리자 권한이 없는 계정입니다.');
-      return;
-    }
-    setManaging(value => !value);
-    setEditing(null);
+    setEditorOpen(false);
   }
 
   return (
@@ -94,10 +92,12 @@ export default function App() {
           <a className="brand" href="#top">Git Case Guide</a>
           <div className="header-actions">
             {user && <span className="user-badge">{user.email}</span>}
-            <button className={`manage-btn ${managing ? 'active' : ''}`} onClick={openManager}>
-              {managing ? '가이드 보기' : user && isAdmin ? '데이터 관리' : '관리자 로그인'}
-            </button>
-            {user && <button className="logout-btn" onClick={() => { setManaging(false); signOut(); }}>로그아웃</button>}
+            {isAdmin ? (
+              <button className="manage-btn add-case-btn" onClick={addCase}>＋ 새 케이스 추가</button>
+            ) : (
+              <button className="manage-btn" onClick={() => setLoginOpen(true)}>관리자 로그인</button>
+            )}
+            {user && <button className="logout-btn" onClick={() => { setEditorOpen(false); setEditing(null); signOut(); }}>로그아웃</button>}
             <a className="github-link" href="https://github.com/kym0813/gitcmd" target="_blank" rel="noreferrer">GitHub</a>
           </div>
         </div>
@@ -120,15 +120,6 @@ export default function App() {
           </div>
         </section>
 
-        {managing && isAdmin && (
-          <section className="manager-section" ref={editorRef}>
-            <div className="container manager-grid">
-              <CaseForm editing={editing} onSave={persistCase} onCancel={() => setEditing(null)} />
-              <DataTools cases={cases} onImport={importCases} onReset={async () => { await resetCases(); setEditing(null); }} />
-            </div>
-          </section>
-        )}
-
         <section className="content-section">
           <div className="container layout">
             <aside className="sidebar">
@@ -146,7 +137,7 @@ export default function App() {
 
             <section className="results-area">
               <div className="results-head">
-                <div><p className="section-label">{managing ? 'MANAGE LIBRARY' : 'CASE LIBRARY'}</p><h2>{category === '전체' ? '전체 Git 케이스' : `${category} 케이스`}</h2></div>
+                <div><p className="section-label">CASE LIBRARY</p><h2>{category === '전체' ? '전체 Git 케이스' : `${category} 케이스`}</h2></div>
                 <span className="result-count">{filteredCases.length}개 결과</span>
               </div>
               {loading ? (
@@ -158,11 +149,20 @@ export default function App() {
               ) : !filteredCases.length ? (
                 <div className="empty-state"><h3>검색 결과가 없습니다.</h3><p>다른 키워드로 검색하거나 카테고리를 변경해보세요.</p></div>
               ) : (
-                <div className="cards">{filteredCases.map(item => <CaseCard key={item.id} item={item} managing={managing} onEdit={editCase} onDelete={removeCase} />)}</div>
+                <div className="cards">{filteredCases.map(item => <CaseCard key={item.id} item={item} managing={isAdmin} onEdit={editCase} onDelete={removeCase} />)}</div>
               )}
             </section>
           </div>
         </section>
+
+        {editorOpen && isAdmin && (
+          <section className="manager-section editor-bottom" ref={editorRef}>
+            <div className="container manager-grid">
+              <CaseForm editing={editing} onSave={persistCase} onCancel={() => { setEditing(null); setEditorOpen(false); }} />
+              <DataTools cases={cases} onImport={importCases} onReset={async () => { await resetCases(); setEditing(null); setEditorOpen(false); }} />
+            </div>
+          </section>
+        )}
       </main>
 
       <footer><div className="container footer-inner"><p>Git Case Guide · React로 만든 상황별 Git 가이드</p><p>위험한 명령어는 실행 전 현재 브랜치와 상태를 꼭 확인하세요.</p></div></footer>

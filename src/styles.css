@@ -132,6 +132,7 @@ kbd { border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 6p
 .error-state p { overflow-wrap: anywhere; }
 
 .manager-section { padding: 38px 0; background: #eef3fa; border-bottom: 1px solid var(--line); scroll-margin-top: 66px; }
+.editor-bottom { border-top: 1px solid var(--line); border-bottom: 0; }
 .manager-grid { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(280px, .65fr); gap: 20px; align-items: start; }
 .case-form, .data-tools { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); padding: 24px; }
 .form-heading { display: flex; justify-content: space-between; align-items: start; gap: 16px; margin-bottom: 20px; }
