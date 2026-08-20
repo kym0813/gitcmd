@@ -1,51 +1,34 @@
 # Git Case Guide
 
-상황별로 Git 명령어를 빠르게 찾을 수 있는 정적 웹사이트입니다.
+상황별 Git 명령어를 검색하고 웹 화면에서 직접 관리할 수 있는 React 애플리케이션입니다.
 
 ## 기능
 
-- 실무 상황 중심 Git 명령어 검색
-- 카테고리 필터
-- 자주 찾는 검색어
-- 명령어 복사 버튼
-- 설명 / 주의사항 펼치기
-- 모바일 반응형
-- 별도 빌드 없이 GitHub Pages 배포 가능
+- 실무 상황 중심 검색 및 카테고리 필터
+- 명령어 복사, 상세 설명 펼치기
+- 관리 모드에서 케이스 추가·수정·삭제
+- 기존 `data.js` 형식과 동일한 데이터 필드
+- `localStorage` 자동 저장
+- JSON 내보내기·가져오기 및 기본 데이터 복원
+- 모바일 반응형 UI
+- GitHub Actions를 통한 GitHub Pages 자동 배포
 
 ## 로컬 실행
 
-파일을 그대로 열어도 동작하지만, 간단한 로컬 서버 사용을 권장합니다.
+```bash
+npm install
+npm run dev
+```
+
+프로덕션 빌드 확인:
 
 ```bash
-python3 -m http.server 8080
+npm run build
+npm run preview
 ```
 
-브라우저에서 `http://localhost:8080` 접속.
+## 데이터 관리
 
-## GitHub Pages 배포
+페이지 상단의 **데이터 관리** 버튼을 누르면 편집 화면이 열립니다. 웹에서 변경한 데이터는 현재 브라우저에 저장되므로 다른 기기와 자동 공유되지는 않습니다. 다른 브라우저나 기기로 옮길 때는 JSON 내보내기·가져오기를 사용하세요.
 
-1. 새 GitHub 저장소 생성
-2. 이 폴더의 파일 전체를 저장소 루트에 업로드
-3. GitHub 저장소에서 **Settings → Pages** 이동
-4. **Build and deployment → Source**를 `Deploy from a branch`로 선택
-5. Branch를 `main`, 폴더를 `/ (root)`로 선택
-6. Save
-
-잠시 후 GitHub Pages 주소가 생성됩니다.
-
-## 데이터 추가 방법
-
-`data.js`의 `gitCases` 배열에 객체를 추가하면 됩니다.
-
-```js
-{
-  id: 'example',
-  category: '기본',
-  title: '제목',
-  summary: '어떤 상황인지',
-  command: 'git status',
-  detail: '설명 및 주의사항',
-  tags: ['기본'],
-  keywords: ['검색어1', '검색어2']
-}
-```
+저장소에 포함되는 기본 데이터는 `src/data/defaultCases.js`에서 관리합니다.

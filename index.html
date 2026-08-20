@@ -1,74 +1,13 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ko">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="상황별로 빠르게 찾는 Git 명령어 가이드" />
-  <title>Git Case Guide</title>
-  <link rel="stylesheet" href="styles.css" />
-</head>
-<body>
-  <header class="site-header">
-    <div class="container header-inner">
-      <a class="brand" href="#">Git Case Guide</a>
-      <a class="github-link" href="https://github.com/" target="_blank" rel="noreferrer">GitHub Pages Ready</a>
-    </div>
-  </header>
-
-  <main>
-    <section class="hero">
-      <div class="container hero-inner">
-        <span class="eyebrow">Git 실무 치트시트</span>
-        <h1>명령어가 아니라<br><span>상황으로 찾는 Git 가이드</span></h1>
-        <p>"원격 main 최신화", "push가 거절됨", "특정 작업만 롤백"처럼 실제 상황을 검색하세요.</p>
-
-        <div class="search-wrap">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21 21-4.3-4.3m1.3-5.2a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-          <input id="searchInput" type="search" placeholder="예: 원격 main 리베이스, 커밋 취소, 브랜치 삭제..." autocomplete="off" />
-          <kbd>/</kbd>
-        </div>
-
-        <div id="quickKeywords" class="quick-keywords"></div>
-      </div>
-    </section>
-
-    <section class="content-section">
-      <div class="container layout">
-        <aside class="sidebar">
-          <div class="sidebar-sticky">
-            <h2>카테고리</h2>
-            <nav id="categoryNav" class="category-nav" aria-label="Git categories"></nav>
-          </div>
-        </aside>
-
-        <section class="results-area">
-          <div class="results-head">
-            <div>
-              <p class="section-label">CASE LIBRARY</p>
-              <h2 id="resultsTitle">전체 Git 케이스</h2>
-            </div>
-            <span id="resultCount" class="result-count"></span>
-          </div>
-
-          <div id="emptyState" class="empty-state" hidden>
-            <h3>검색 결과가 없습니다.</h3>
-            <p>다른 키워드로 검색하거나 카테고리를 변경해보세요.</p>
-          </div>
-
-          <div id="cards" class="cards"></div>
-        </section>
-      </div>
-    </section>
-  </main>
-
-  <footer>
-    <div class="container footer-inner">
-      <p>Git Case Guide · GitHub Pages에서 바로 실행되는 정적 사이트</p>
-      <p>위험한 명령어는 실행 전 현재 브랜치와 상태를 꼭 확인하세요.</p>
-    </div>
-  </footer>
-
-  <script src="data.js"></script>
-  <script src="app.js"></script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="상황별로 빠르게 찾고 직접 관리하는 Git 명령어 가이드" />
+    <title>Git Case Guide</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
 </html>

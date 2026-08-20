@@ -1,4 +1,4 @@
-const gitCases = [
+export const defaultCases = [
   {
     id: 'status', category: '기본', title: '현재 Git 상태 확인',
     summary: '수정된 파일, 스테이징 여부, 현재 브랜치 상태를 가장 먼저 확인할 때',
