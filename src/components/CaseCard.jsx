@@ -19,7 +19,8 @@ export default function CaseCard({ item, managing, onEdit, onDelete }) {
       <div className="card-main">
         <div className="card-top">
           <div className="card-tags">
-            {(item.tags || []).map(tag => <span className={`tag ${item.danger || ''}`} key={tag}>{tag}</span>)}
+            <span className="category-tag">{item.category}</span>
+            {(item.tags || []).filter(tag => tag !== item.category).map(tag => <span className={`tag ${item.danger || ''}`} key={tag}>{tag}</span>)}
           </div>
           {managing && (
             <div className="card-actions">
@@ -28,7 +29,10 @@ export default function CaseCard({ item, managing, onEdit, onDelete }) {
             </div>
           )}
         </div>
-        <h3>{item.title}</h3>
+        <div className="card-title-row">
+          <h3>{item.title}</h3>
+          {item.danger && <span className={`risk-label ${item.danger}`}>{item.danger === 'danger' ? '위험' : '주의'}</span>}
+        </div>
         <p className="case-summary">{item.summary}</p>
         <div className="code-block">
           <div className="code-label">

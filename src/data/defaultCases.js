@@ -208,5 +208,61 @@ export const defaultCases = [
     command: 'git branch --show-current',
     detail: 'rebase, reset, push 같은 명령 전에 현재 브랜치를 확인하면 실수를 줄일 수 있습니다.',
     tags: ['기본', '안전'], keywords: ['현재 브랜치', '브랜치 이름']
+  },
+  {
+    id: 'clone-repository', category: '원격', title: '원격 저장소를 처음 내려받기',
+    summary: 'GitHub 등에 있는 프로젝트를 내 컴퓨터에 새 작업 폴더로 복제할 때',
+    command: 'git clone 저장소주소\ncd 저장소이름',
+    detail: 'clone은 파일뿐 아니라 커밋 기록과 원격 연결 정보까지 함께 내려받습니다. 특정 브랜치만 필요하면 --branch 브랜치명 옵션을 사용할 수 있습니다.',
+    tags: ['원격', '시작'], keywords: ['clone', '저장소 복제', '프로젝트 받기', '처음 내려받기']
+  },
+  {
+    id: 'pull-rebase', category: 'Push/Pull', title: '원격 변경을 깔끔하게 rebase로 반영',
+    summary: '불필요한 merge 커밋 없이 원격 최신 변경 뒤에 내 커밋을 이어 붙일 때',
+    command: 'git pull --rebase origin 현재브랜치',
+    detail: '아직 push하지 않은 로컬 커밋이 있을 때 유용합니다. 충돌이 나면 해결 후 git rebase --continue를 실행하고, 취소하려면 git rebase --abort를 사용하세요.',
+    tags: ['Pull', '리베이스'], keywords: ['pull rebase', '원격 반영', 'merge 커밋 방지'], danger: 'warning'
+  },
+  {
+    id: 'merge-abort', category: '병합', title: '충돌 난 merge를 시작 전으로 취소',
+    summary: '병합 충돌 해결이 어렵거나 잘못된 브랜치를 합쳐 merge 자체를 중단할 때',
+    command: 'git merge --abort',
+    detail: '진행 중인 merge를 중단하고 가능한 한 병합 시작 전 상태로 복원합니다. 실행 전 git status로 현재 merge 상태인지 확인하세요.',
+    tags: ['병합', '복구'], keywords: ['merge 취소', '병합 충돌 취소', 'merge abort']
+  },
+  {
+    id: 'stash-list-show', category: '작업보관', title: '보관한 stash 목록과 내용 확인',
+    summary: '여러 stash 중 어떤 작업을 복원해야 하는지 먼저 확인할 때',
+    command: 'git stash list\ngit stash show -p stash@{0}',
+    detail: 'list에서 stash 번호와 메시지를 확인하고 show -p로 실제 변경 내용을 검토합니다. 확인 후 git stash apply stash@{번호}로 원하는 항목만 적용할 수 있습니다.',
+    tags: ['Stash', '안전'], keywords: ['stash 목록', 'stash 내용', '임시 작업 확인']
+  },
+  {
+    id: 'clean-preview', category: '복구/롤백', title: '추적되지 않은 파일 삭제 전 미리보기',
+    summary: '빌드 결과물 등 Git이 추적하지 않는 파일을 정리하기 전에 삭제 대상을 확인할 때',
+    command: 'git clean -nd\n# 확인 후 실제 삭제\ngit clean -fd',
+    detail: '반드시 -n으로 삭제 대상을 먼저 확인하세요. -fd를 실행하면 추적되지 않은 파일과 폴더가 삭제되며 일반적인 Git 복구가 어렵습니다.',
+    tags: ['정리', '위험'], keywords: ['git clean', 'untracked 삭제', '파일 정리', '미리보기'], danger: 'danger'
+  },
+  {
+    id: 'compare-branches', category: '기본', title: '두 브랜치의 커밋과 코드 차이 비교',
+    summary: '병합이나 배포 전에 작업 브랜치가 main과 어떻게 다른지 확인할 때',
+    command: 'git log --oneline main..현재브랜치\ngit diff main...현재브랜치',
+    detail: '첫 명령은 현재 브랜치에만 있는 커밋을, 두 번째 명령은 공통 조상 이후의 코드 변경을 보여줍니다. PR 생성 전 자체 검토에 유용합니다.',
+    tags: ['비교', '안전'], keywords: ['브랜치 비교', 'diff branch', '커밋 차이', 'PR 확인']
+  },
+  {
+    id: 'bisect-bug', category: '고급', title: '버그가 시작된 커밋을 이진 탐색으로 찾기',
+    summary: '커밋이 많아 어느 변경부터 문제가 생겼는지 빠르게 좁혀야 할 때',
+    command: 'git bisect start\ngit bisect bad\ngit bisect good 정상커밋해시\n# 각 단계 테스트 후 good 또는 bad\ngit bisect reset',
+    detail: 'Git이 정상 커밋과 문제 커밋 사이를 절반씩 이동시킵니다. 각 단계에서 테스트하고 good 또는 bad를 표시하면 원인 커밋을 빠르게 찾을 수 있습니다.',
+    tags: ['디버깅', '고급'], keywords: ['bisect', '버그 커밋 찾기', '이진 탐색', '원인 추적']
+  },
+  {
+    id: 'rename-branch', category: '브랜치', title: '현재 브랜치 이름 변경 후 원격에 반영',
+    summary: '오타가 있거나 브랜치 네이밍 규칙에 맞게 현재 브랜치 이름을 바꿀 때',
+    command: 'git branch -m 새브랜치명\ngit push -u origin 새브랜치명\ngit push origin --delete 이전브랜치명',
+    detail: '새 이름을 먼저 push하고 정상 연결을 확인한 뒤 이전 원격 브랜치를 삭제하세요. 협업자가 사용 중인 브랜치라면 변경 사실을 먼저 공유해야 합니다.',
+    tags: ['브랜치', '원격', '주의'], keywords: ['브랜치 이름 변경', 'branch rename', '원격 이름 변경'], danger: 'warning'
   }
 ];

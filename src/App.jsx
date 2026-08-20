@@ -10,13 +10,14 @@ const normalize = value => String(value).toLowerCase().replace(/\s+/g, ' ').trim
 
 export default function App() {
   const { user, isAdmin, loading: authLoading, signOut } = useAuth();
-  const { cases, loading, error, saveCase, deleteCase, seedDefaults } = useCaseStore();
+  const { cases, loading, error, saveCase, deleteCase, seedDefaults, syncDefaultContent } = useCaseStore();
   const [category, setCategory] = useState('전체');
   const [query, setQuery] = useState('');
   const [editing, setEditing] = useState(null);
   const [editorOpen, setEditorOpen] = useState(false);
   const [loginOpen, setLoginOpen] = useState(false);
   const [seedError, setSeedError] = useState('');
+  const [contentSyncing, setContentSyncing] = useState(false);
   const searchRef = useRef(null);
 
   const categories = useMemo(() => ['전체', ...new Set(cases.map(item => item.category))], [cases]);
@@ -50,6 +51,16 @@ export default function App() {
       seedDefaults().catch(seedFailure => setSeedError(seedFailure.message));
     }
   }, [authLoading, isAdmin, loading, error, cases.length, seedDefaults]);
+
+  useEffect(() => {
+    const contentVersion = '2026-08-content-v2';
+    if (authLoading || !isAdmin || loading || error || contentSyncing || localStorage.getItem('git-case-guide:content-version') === contentVersion) return;
+    setContentSyncing(true);
+    syncDefaultContent()
+      .then(() => localStorage.setItem('git-case-guide:content-version', contentVersion))
+      .catch(syncError => setSeedError(syncError.message))
+      .finally(() => setContentSyncing(false));
+  }, [authLoading, isAdmin, loading, error, contentSyncing, syncDefaultContent]);
 
   useEffect(() => {
     if (!editorOpen) return undefined;
@@ -97,8 +108,9 @@ export default function App() {
     <>
       <header className="site-header">
         <div className="container header-inner">
-          <a className="brand" href="#top">Git Case Guide</a>
+          <a className="brand" href="#top"><span className="brand-mark">G</span><span>Git Case Guide</span></a>
           <div className="header-actions">
+            {contentSyncing && <span className="sync-badge">콘텐츠 보강 중</span>}
             {user && <span className="user-badge">{user.email}</span>}
             {isAdmin ? (
               <button className="manage-btn add-case-btn" onClick={addCase}>＋ 새 케이스 추가</button>
@@ -117,10 +129,15 @@ export default function App() {
             <span className="eyebrow">Git 실무 치트시트</span>
             <h1>명령어가 아니라<br /><span>상황으로 찾는 Git 가이드</span></h1>
             <p>“원격 main 최신화”, “push가 거절됨”, “특정 작업만 롤백”처럼 실제 상황을 검색하세요.</p>
+            <div className="hero-stats" aria-label="가이드 통계">
+              <span><strong>{cases.length}</strong> 실무 케이스</span>
+              <span><strong>{Math.max(categories.length - 1, 0)}</strong> 카테고리</span>
+              <span><i className="live-dot" /> 서버 동기화</span>
+            </div>
             <div className="search-wrap">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21 21-4.3-4.3m1.3-5.2a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0Z" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg>
               <input ref={searchRef} type="search" value={query} onChange={event => setQuery(event.target.value)} placeholder="예: 원격 main 리베이스, 커밋 취소, 브랜치 삭제..." autoComplete="off" />
-              <kbd>/</kbd>
+              {query ? <button className="search-clear" onClick={() => { setQuery(''); searchRef.current?.focus(); }} aria-label="검색어 지우기">×</button> : <kbd>/</kbd>}
             </div>
             <div className="quick-keywords">
               {quickKeywords.map(keyword => <button className="keyword-btn" key={keyword} onClick={() => { setQuery(keyword); searchRef.current?.focus(); }}>{keyword}</button>)}
@@ -146,7 +163,7 @@ export default function App() {
             <section className="results-area">
               <div className="results-head">
                 <div><p className="section-label">CASE LIBRARY</p><h2>{category === '전체' ? '전체 Git 케이스' : `${category} 케이스`}</h2></div>
-                <span className="result-count">{filteredCases.length}개 결과</span>
+                <span className="result-count"><strong>{filteredCases.length}</strong>개 결과</span>
               </div>
               {loading ? (
                 <div className="empty-state"><h3>서버 데이터를 불러오는 중입니다.</h3></div>

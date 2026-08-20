@@ -86,5 +86,13 @@ export function useCaseStore() {
     return true;
   }, [cases.length]);
 
-  return { cases, loading, error, loadCases, saveCase, deleteCase, resetCases, importCases, seedDefaults };
+  const syncDefaultContent = useCallback(async () => {
+    const { error: syncError } = await supabase
+      .from('git_cases')
+      .upsert(defaultCases.map(normalizeCase), { onConflict: 'id' });
+    if (syncError) throw new Error(syncError.message);
+    await loadCases();
+  }, [loadCases]);
+
+  return { cases, loading, error, loadCases, saveCase, deleteCase, resetCases, importCases, seedDefaults, syncDefaultContent };
 }
