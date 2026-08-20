@@ -46,7 +46,7 @@ export default function CaseForm({ editing, onSave, onCancel }) {
     <form className="case-form" onSubmit={submit}>
       <div className="form-heading">
         <div><p className="section-label">CASE EDITOR</p><h3>{editing ? '케이스 수정' : '새 케이스 추가'}</h3></div>
-        <button type="button" className="text-btn" onClick={onCancel}>{editing ? '수정 취소' : '닫기'}</button>
+        <button type="button" className="editor-close-btn" onClick={onCancel}>닫기</button>
       </div>
       <div className="form-grid">
         {field('id', '고유 ID', '예: undo-last-commit')}
