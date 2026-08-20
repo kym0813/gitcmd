@@ -9,6 +9,7 @@ const toList = value => value.split(',').map(item => item.trim()).filter(Boolean
 export default function CaseForm({ editing, onSave, onCancel }) {
   const [form, setForm] = useState(EMPTY_CASE);
   const [error, setError] = useState('');
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     setForm(editing ? { ...EMPTY_CASE, ...editing } : EMPTY_CASE);
@@ -20,14 +21,17 @@ export default function CaseForm({ editing, onSave, onCancel }) {
     setForm(current => ({ ...current, [name]: value }));
   }
 
-  function submit(event) {
+  async function submit(event) {
     event.preventDefault();
+    setSaving(true);
     try {
-      onSave({ ...form, tags: Array.isArray(form.tags) ? form.tags : toList(form.tags), keywords: Array.isArray(form.keywords) ? form.keywords : toList(form.keywords) });
+      await onSave({ ...form, tags: Array.isArray(form.tags) ? form.tags : toList(form.tags), keywords: Array.isArray(form.keywords) ? form.keywords : toList(form.keywords) });
       setForm(EMPTY_CASE);
       setError('');
     } catch (saveError) {
       setError(saveError.message);
+    } finally {
+      setSaving(false);
     }
   }
 
@@ -56,7 +60,7 @@ export default function CaseForm({ editing, onSave, onCancel }) {
         <label className="form-field"><span>위험도</span><select name="danger" value={form.danger || ''} onChange={update}><option value="">일반</option><option value="warning">주의</option><option value="danger">위험</option></select></label>
       </div>
       {error && <p className="form-error" role="alert">{error}</p>}
-      <button className="primary-btn" type="submit">{editing ? '변경사항 저장' : '케이스 추가'}</button>
+      <button className="primary-btn" type="submit" disabled={saving}>{saving ? '저장 중...' : editing ? '변경사항 저장' : '케이스 추가'}</button>
     </form>
   );
 }

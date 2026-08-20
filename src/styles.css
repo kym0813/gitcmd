@@ -40,9 +40,12 @@ a { color: inherit; text-decoration: none; }
 .header-inner { height: 66px; display: flex; align-items: center; justify-content: space-between; }
 .brand { font-weight: 800; letter-spacing: -.03em; font-size: 18px; }
 .header-actions { display: flex; align-items: center; gap: 8px; }
+.user-badge { max-width: 190px; overflow: hidden; text-overflow: ellipsis; color: var(--muted); font-size: 11px; white-space: nowrap; }
 .github-link { font-size: 13px; color: var(--muted); padding: 8px 12px; border: 1px solid var(--line); border-radius: 999px; background: #fff; }
 .manage-btn { border: 1px solid var(--line); border-radius: 999px; background: #fff; color: var(--muted); padding: 8px 13px; cursor: pointer; font-size: 13px; font-weight: 700; }
 .manage-btn:hover, .manage-btn.active { color: #fff; background: #111827; border-color: #111827; }
+.logout-btn { border: 0; background: transparent; color: var(--muted); cursor: pointer; padding: 7px 4px; font-size: 12px; }
+.logout-btn:hover { color: var(--danger); }
 
 .hero {
   background:
@@ -125,6 +128,8 @@ kbd { border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 6p
 
 .empty-state { padding: 50px 20px; text-align: center; background: #fff; border: 1px dashed #ccd2db; border-radius: var(--radius); color: var(--muted); }
 .empty-state h3 { color: var(--text); margin-bottom: 5px; }
+.error-state { border-color: #f0c6c2; background: var(--danger-soft); }
+.error-state p { overflow-wrap: anywhere; }
 
 .manager-section { padding: 38px 0; background: #eef3fa; border-bottom: 1px solid var(--line); scroll-margin-top: 66px; }
 .manager-grid { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(280px, .65fr); gap: 20px; align-items: start; }
@@ -148,6 +153,15 @@ kbd { border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 6p
 .secondary-btn { border: 1px solid var(--line); background: #fff; color: #4f5b6a; padding: 10px 12px; text-align: left; }
 .secondary-btn:hover { background: var(--surface-soft); }
 .tool-message { margin: 14px 0 0 !important; padding: 9px 11px; border-radius: 9px; background: var(--accent-soft); color: #315d9b !important; }
+.login-backdrop { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: 20px; background: rgba(13,17,23,.62); backdrop-filter: blur(5px); }
+.login-panel { position: relative; width: min(420px, 100%); border: 1px solid var(--line); border-radius: 20px; background: #fff; box-shadow: 0 25px 80px rgba(0,0,0,.25); padding: 30px; }
+.login-panel h2 { margin: 3px 0 6px; letter-spacing: -.035em; }
+.login-panel > p:not(.section-label) { margin: 0 0 20px; color: var(--muted); font-size: 13px; }
+.login-panel form { display: grid; gap: 14px; }
+.login-panel .form-error { margin: 0; }
+.login-submit { width: 100%; margin-top: 2px; }
+.modal-close { position: absolute; top: 14px; right: 15px; border: 0; background: transparent; color: var(--muted); cursor: pointer; font-size: 25px; line-height: 1; }
+.primary-btn:disabled { cursor: wait; opacity: .65; }
 footer { border-top: 1px solid var(--line); background: #fff; }
 .footer-inner { padding: 28px 0 40px; display: flex; justify-content: space-between; gap: 20px; color: var(--muted); font-size: 12px; }
 .footer-inner p { margin: 0; }
@@ -168,6 +182,7 @@ footer { border-top: 1px solid var(--line); background: #fff; }
 @media (max-width: 560px) {
   .header-inner { height: 58px; }
   .github-link { display: none; }
+  .user-badge { display: none; }
   .manage-btn { padding: 7px 11px; }
   .hero p { font-size: 15px; }
   .search-wrap { border-radius: 13px; }
